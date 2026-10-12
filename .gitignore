@@ -50,3 +50,13 @@ app.*.map.json
 
 # Kotlin compiler session files from Gradle
 android/.kotlin/
+
+# Written by flutter gen-l10n when a translation is missing a key
+l10n-missing.txt
+
+# Written by flutter test when a golden does not match
+test/**/failures/
+
+# AI tooling, never part of the project
+.claude/
+CLAUDE.md

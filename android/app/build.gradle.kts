@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace = "no.ntnu.idatt2506.hangman"
-    compileSdk = flutter.compileSdkVersion
+    // Pinned rather than taken from the installed SDK, so the version the
+    // README names is the version anyone building this gets.
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -16,10 +18,13 @@ android {
 
     defaultConfig {
         applicationId = "no.ntnu.idatt2506.hangman"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        // 24 is the oldest Android the app is claimed to run on; 36 is what it
+        // was developed and tested against on the Pixel 6 emulator.
+        minSdk = 24
+        targetSdk = 36
+        // The app ships two languages, so there is no reason to carry every
+        // locale Material has.
+        resourceConfigurations += listOf("en", "nb")
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
         // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`

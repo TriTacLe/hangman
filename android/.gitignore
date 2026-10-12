@@ -12,3 +12,8 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Eclipse files the Gradle tooling drops here
+.project
+.classpath
+.settings/
