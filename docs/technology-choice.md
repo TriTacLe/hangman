@@ -65,7 +65,7 @@ the toolchain generates a typed accessor class from them, with plural and placeh
 into the format. The framework resolves the locale from the device and accepts an explicit override,
 and the generated class exposes the list of supported locales so the two cannot drift apart. In this
 app that machinery carries not only the labels but the alphabet itself, which is why the Norwegian
-keyboard has 29 keys and the English one has 26.
+keyboard has 29 keys, ending in æ, ø and å, while the English one has 26.
 
 React Native has no equivalent in the framework. Translation comes from a library chosen per project,
 most often i18next with a locale module, which works but leaves the format, the plural rules and the
