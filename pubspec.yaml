@@ -1,0 +1,54 @@
+name: hangman
+description: "Hangman in Norwegian and English, for the IDATT2506 project exercise."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  cupertino_icons: ^1.0.8
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0
+
+flutter:
+
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/words_en.txt
+    - assets/words_nb.txt
+
+  
+
+flutter_launcher_icons:
+  image_path: assets/icon/app_icon.png
+  android: true
+  ios: true
+  web:
+    generate: true
+  adaptive_icon_background: "#F4F1EA"
+  adaptive_icon_foreground: assets/icon/adaptive_foreground.png
+
+flutter_native_splash:
+  color: "#F4F1EA"
+  color_dark: "#121210"
+  image: assets/icon/splash_mark.png
+  image_dark: assets/icon/splash_mark_dark.png
+  android_12:
+    color: "#F4F1EA"
+    color_dark: "#121210"
+    image: assets/icon/splash_mark.png
+    image_dark: assets/icon/splash_mark_dark.png
