@@ -21,6 +21,7 @@ class _HangmanAppState extends State<HangmanApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+      debugShowCheckedModeBanner: false,
       locale: _locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

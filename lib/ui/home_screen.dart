@@ -21,61 +21,91 @@ class HomeScreen extends StatelessWidget {
     final strings = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
+    final heading = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          strings.appTitle,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          strings.homeTagline,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyLarge,
+        ),
+      ],
+    );
+
+    final controls = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        FilledButton(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const GameScreen()),
+          ),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(56),
+            textStyle: theme.textTheme.titleMedium,
+          ),
+          child: Text(strings.playButton),
+        ),
+        const SizedBox(height: 16),
+        OutlinedButton(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const InfoScreen()),
+          ),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(56),
+            textStyle: theme.textTheme.titleMedium,
+          ),
+          child: Text(strings.infoButton),
+        ),
+        const SizedBox(height: 32),
+        _LanguagePicker(
+          selectedLocale: selectedLocale,
+          onLocaleSelected: onLocaleSelected,
+        ),
+      ],
+    );
+
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    strings.appTitle,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    strings.homeTagline,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 40),
-                  FilledButton(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const GameScreen()),
-                    ),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(56),
-                      textStyle: theme.textTheme.titleMedium,
-                    ),
-                    child: Text(strings.playButton),
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const InfoScreen()),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(56),
-                      textStyle: theme.textTheme.titleMedium,
-                    ),
-                    child: Text(strings.infoButton),
-                  ),
-                  const SizedBox(height: 40),
-                  _LanguagePicker(
-                    selectedLocale: selectedLocale,
-                    onLocaleSelected: onLocaleSelected,
-                  ),
-                ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Side by side in landscape, otherwise the language choice falls
+            // below the fold on a phone held sideways.
+            final sideBySide = constraints.maxWidth > constraints.maxHeight;
+
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: sideBySide ? 820 : 420),
+                  child: sideBySide
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(child: heading),
+                            const SizedBox(width: 32),
+                            Expanded(child: controls),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            heading,
+                            const SizedBox(height: 40),
+                            controls,
+                          ],
+                        ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -90,6 +120,8 @@ class _LanguagePicker extends StatelessWidget {
 
   final Locale? selectedLocale;
   final ValueChanged<Locale?> onLocaleSelected;
+
+  static const String _systemValue = 'system';
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +147,4 @@ class _LanguagePicker extends StatelessWidget {
       ],
     );
   }
-
-  static const String _systemValue = 'system';
 }

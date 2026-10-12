@@ -96,53 +96,84 @@ class _GameBody extends StatelessWidget {
     final theme = Theme.of(context);
     final finished = game.status != GameStatus.playing;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 520),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                height: 220,
-                child: CustomPaint(
-                  painter: GallowsPainter(
-                    wrongGuesses: game.wrongGuesses,
-                    frameColor: theme.colorScheme.onSurfaceVariant,
-                    figureColor: theme.colorScheme.primary,
-                  ),
-                  child: const SizedBox.expand(),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                strings.remainingGuesses(game.remainingGuesses),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _spaced(finished ? game.revealedWord : game.maskedWord),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2,
-                ),
-              ),
-              const SizedBox(height: 24),
-              if (finished)
-                _Result(game: game, onPlayAgain: onPlayAgain)
-              else
-                LetterKeyboard(
-                  letters: strings.alphabet.split(''),
-                  isUsed: game.hasGuessed,
-                  onLetter: onGuess,
-                ),
-            ],
+    Widget drawing(double height) => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          height: height,
+          child: CustomPaint(
+            painter: GallowsPainter(
+              wrongGuesses: game.wrongGuesses,
+              frameColor: theme.colorScheme.onSurfaceVariant,
+              figureColor: theme.colorScheme.primary,
+            ),
+            child: const SizedBox.expand(),
           ),
         ),
-      ),
+        const SizedBox(height: 8),
+        Text(
+          strings.remainingGuesses(game.remainingGuesses),
+          textAlign: TextAlign.center,
+          style: theme.textTheme.titleMedium,
+        ),
+      ],
+    );
+
+    final play = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          _spaced(finished ? game.revealedWord : game.maskedWord),
+          textAlign: TextAlign.center,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            letterSpacing: 2,
+          ),
+        ),
+        const SizedBox(height: 24),
+        if (finished)
+          _Result(game: game, onPlayAgain: onPlayAgain)
+        else
+          LetterKeyboard(
+            letters: strings.alphabet.split(''),
+            isUsed: game.hasGuessed,
+            onLetter: onGuess,
+          ),
+      ],
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Side by side in landscape, otherwise the keyboard falls below the fold.
+        final sideBySide = constraints.maxWidth > constraints.maxHeight;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: sideBySide ? 900 : 520),
+              child: sideBySide
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(child: drawing(180)),
+                        const SizedBox(width: 24),
+                        Expanded(child: play),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        drawing(220),
+                        const SizedBox(height: 20),
+                        play,
+                      ],
+                    ),
+            ),
+          ),
+        );
+      },
     );
   }
 
