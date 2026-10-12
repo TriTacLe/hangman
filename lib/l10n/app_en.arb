@@ -1,0 +1,107 @@
+{
+  "@@locale": "en",
+  "appTitle": "Hangman",
+  "@appTitle": {
+    "description": "Name of the app, shown on the start screen and in the app bar"
+  },
+  "homeTagline": "Guess the word one letter at a time.",
+  "@homeTagline": {
+    "description": "One line under the title on the start screen"
+  },
+  "playButton": "Play",
+  "@playButton": {
+    "description": "Starts a new game"
+  },
+  "infoButton": "How to play",
+  "@infoButton": {
+    "description": "Opens the info page, from the start screen and from a running game"
+  },
+  "languageLabel": "Language",
+  "@languageLabel": {
+    "description": "Label for the language choice on the start screen"
+  },
+  "languageSystem": "Device language",
+  "@languageSystem": {
+    "description": "Language option that follows the system setting"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Language option, written in the language it selects"
+  },
+  "languageNorwegian": "Norsk",
+  "@languageNorwegian": {
+    "description": "Language option, written in the language it selects"
+  },
+  "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  "@alphabet": {
+    "description": "The letters shown on the keyboard for this language, uppercase and in order"
+  },
+  "infoTitle": "How to play",
+  "@infoTitle": {
+    "description": "Title of the info page"
+  },
+  "infoRules": "The game picks a word and hides every letter. Tap a letter to guess it. A letter that is in the word is revealed everywhere it appears, and a letter that is not costs you one attempt.\n\nYou have six wrong guesses. The drawing gains one more part for each of them, and the game is over when it is finished. Guess every letter before that and you win.\n\nThe word comes from the list for the language the app is running in, so the Norwegian list uses the Norwegian alphabet.",
+  "@infoRules": {
+    "description": "The rules, shown on the info page"
+  },
+  "remainingGuesses": "{count, plural, =0{No guesses left} =1{1 wrong guess left} other{{count} wrong guesses left}}",
+  "@remainingGuesses": {
+    "description": "How many wrong guesses the player has left",
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "wonTitle": "You won",
+  "@wonTitle": {
+    "description": "Shown when every letter has been guessed"
+  },
+  "wonMessage": "You guessed {word} with {wrong, plural, =0{no wrong guesses} =1{one wrong guess} other{{wrong} wrong guesses}}.",
+  "@wonMessage": {
+    "description": "Result line after a win",
+    "placeholders": {
+      "word": {
+        "type": "String",
+        "example": "BICYCLE"
+      },
+      "wrong": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "lostTitle": "You lost",
+  "@lostTitle": {
+    "description": "Shown when the wrong guesses run out"
+  },
+  "lostMessage": "The word was {word}.",
+  "@lostMessage": {
+    "description": "Result line after a loss",
+    "placeholders": {
+      "word": {
+        "type": "String",
+        "example": "BICYCLE"
+      }
+    }
+  },
+  "playAgainButton": "Play again",
+  "@playAgainButton": {
+    "description": "Starts another game with a new word"
+  },
+  "backToStartButton": "Back to start",
+  "@backToStartButton": {
+    "description": "Leaves the game and returns to the start screen"
+  },
+  "guessLetterHint": "Guess the letter {letter}",
+  "@guessLetterHint": {
+    "description": "Screen reader label on a keyboard key",
+    "placeholders": {
+      "letter": {
+        "type": "String",
+        "example": "A"
+      }
+    }
+  }
+}
