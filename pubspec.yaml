@@ -6,14 +6,16 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.13.5
+  # The goldens are rendered by a specific engine, so the Flutter version is
+  # part of the contract, not just the Dart one.
+  flutter: ">=3.47.7"
 
 dependencies:
-  cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: any
+  intl: ^0.20.3
   shared_preferences: ^2.5.6
 
 dev_dependencies:
@@ -31,8 +33,6 @@ flutter:
   assets:
     - assets/words_en.txt
     - assets/words_nb.txt
-
-  
 
 flutter_launcher_icons:
   image_path: assets/icon/app_icon.png
