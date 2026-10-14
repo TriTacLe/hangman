@@ -23,14 +23,21 @@ class GameStore {
       ? _prefs.remove(_localeKey)
       : _prefs.setString(_localeKey, languageCode);
 
+  /// The round left mid-play, or null. Storage this version cannot read counts
+  /// as none: the start screen reads it while building, so it must not throw.
   SavedRound? get round {
     final raw = _prefs.getString(_roundKey);
     if (raw == null) return null;
+
+    final Object? decoded;
     try {
-      return SavedRound.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+      decoded = jsonDecode(raw);
     } on FormatException {
       return null;
     }
+    if (decoded is! Map<String, dynamic>) return null;
+
+    return SavedRound.tryFrom(decoded);
   }
 
   Future<void> saveRound(SavedRound round) =>
@@ -44,15 +51,28 @@ class GameStore {
 class SavedRound {
   const SavedRound({required this.language, required this.game});
 
-  factory SavedRound.fromJson(Map<String, dynamic> json) => SavedRound(
-    language: json['language'] as String,
-    game: HangmanGame.fromJson(json['game'] as Map<String, dynamic>),
-  );
+  /// Bumped whenever the stored shape changes. An older or newer payload is
+  /// discarded rather than guessed at.
+  static const int schemaVersion = 1;
+
+  /// Null unless the payload is a round of [schemaVersion] with every field
+  /// the shape it should be.
+  static SavedRound? tryFrom(Map<String, dynamic> json) {
+    if (json['version'] != schemaVersion) return null;
+
+    final language = json['language'];
+    final game = json['game'];
+    if (language is! String || game is! Map<String, dynamic>) return null;
+
+    final parsed = HangmanGame.tryFrom(game);
+    return parsed == null ? null : SavedRound(language: language, game: parsed);
+  }
 
   final String language;
   final HangmanGame game;
 
   Map<String, dynamic> toJson() => {
+    'version': schemaVersion,
     'language': language,
     'game': game.toJson(),
   };
