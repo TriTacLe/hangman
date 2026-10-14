@@ -67,8 +67,8 @@ abstract class AppLocalizations {
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
@@ -104,12 +104,6 @@ abstract class AppLocalizations {
   /// **'Hangman'**
   String get appTitle;
 
-  /// One line under the title on the start screen
-  ///
-  /// In en, this message translates to:
-  /// **'Guess the word one letter at a time.'**
-  String get homeTagline;
-
   /// Starts a new game
   ///
   /// In en, this message translates to:
@@ -128,18 +122,6 @@ abstract class AppLocalizations {
   /// **'How to play'**
   String get infoButton;
 
-  /// Label for the language choice on the start screen
-  ///
-  /// In en, this message translates to:
-  /// **'Language'**
-  String get languageLabel;
-
-  /// Language option that follows the system setting
-  ///
-  /// In en, this message translates to:
-  /// **'Device language'**
-  String get languageSystem;
-
   /// Language option, written in the language it selects
   ///
   /// In en, this message translates to:
@@ -151,12 +133,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Norsk'**
   String get languageNorwegian;
-
-  /// The letters shown on the keyboard for this language, uppercase and in order
-  ///
-  /// In en, this message translates to:
-  /// **'ABCDEFGHIJKLMNOPQRSTUVWXYZ'**
-  String get alphabet;
 
   /// Title of the info page
   ///
@@ -217,6 +193,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Guess the letter {letter}'**
   String guessLetterHint(String letter);
+
+  /// Screen reader label while the word list is being read
+  ///
+  /// In en, this message translates to:
+  /// **'Picking a word'**
+  String get loadingWord;
+
+  /// Shown when the word list is missing or empty
+  ///
+  /// In en, this message translates to:
+  /// **'The word list could not be read.'**
+  String get loadFailedTitle;
+
+  /// Reads the word list again after it failed
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryButton;
+
+  /// How a screen reader reads a letter that is still hidden
+  ///
+  /// In en, this message translates to:
+  /// **'blank'**
+  String get blankLetter;
+
+  /// Screen reader summary of how much of the word is left
+  ///
+  /// In en, this message translates to:
+  /// **'{hidden, plural, =0{Every letter revealed} =1{One letter still hidden} other{{hidden} letters still hidden}}'**
+  String wordProgress(num hidden);
+
+  /// Asked when a new game would drop the round in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new game?'**
+  String get newGameTitle;
+
+  /// Explains what starting a new game costs
+  ///
+  /// In en, this message translates to:
+  /// **'The round you left unfinished will be dropped.'**
+  String get newGameMessage;
+
+  /// Confirms dropping the saved round
+  ///
+  /// In en, this message translates to:
+  /// **'Start new'**
+  String get newGameConfirm;
+
+  /// Dismisses the rules dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get closeButton;
+
+  /// Dismisses a dialog without doing anything
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelButton;
 }
 
 class _AppLocalizationsDelegate
