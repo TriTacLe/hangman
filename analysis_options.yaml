@@ -1,0 +1,23 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - lib/l10n/app_localizations*.dart
+    - android/**
+    - ios/**
+    - web/**
+
+linter:
+  rules:
+    # Cascades on a game object in a test hide which call is being asserted on.
+    cascade_invocations: false
+    # Writing the class name in its own constructor reads better than `new(`,
+    # especially for anyone coming to Dart from Java or Kotlin.
+    unnecessary_type_name_in_constructor: false
+    # This is an app, not a package. Documenting every public member would mean
+    # a docstring on every widget, which says nothing the name does not.
+    public_member_api_docs: false
+    # Flutter's own samples put the child argument last; keeping that reads
+    # better here than alphabetical argument order.
+    sort_child_properties_last: true
