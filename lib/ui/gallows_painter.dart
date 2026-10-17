@@ -1,12 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 /// The frame is always drawn. [wrongGuesses] decides how much of the figure is.
-///
-/// Lines lean a fraction off true and overshoot their joins, so it reads as
-/// drawn by hand. The wobble comes from a fixed seed, so it is the same drawing
-/// every frame and the golden tests stay stable.
 class GallowsPainter extends CustomPainter {
   GallowsPainter({
     required this.wrongGuesses,
@@ -18,23 +12,13 @@ class GallowsPainter extends CustomPainter {
   final Color frameColor;
   final Color figureColor;
 
-  static const int _seed = 7;
-
   @override
   void paint(Canvas canvas, Size size) {
-    final wobble = Random(_seed);
     final frame = _stroke(frameColor, size);
     final figure = _stroke(figureColor, size);
 
-    double jitter() => (wobble.nextDouble() - 0.5) * size.shortestSide * 0.018;
-
-    void line(Offset from, Offset to, Paint paint) {
-      canvas.drawLine(
-        from.translate(jitter(), jitter()),
-        to.translate(jitter(), jitter()),
-        paint,
-      );
-    }
+    void line(Offset from, Offset to, Paint paint) =>
+        canvas.drawLine(from, to, paint);
 
     final groundY = size.height * 0.95;
     final postX = size.width * 0.3;
@@ -59,11 +43,7 @@ class GallowsPainter extends CustomPainter {
     final shoulder = bodyTop + size.height * 0.05;
 
     if (wrongGuesses >= 1) {
-      canvas.drawCircle(
-        headCentre.translate(jitter(), jitter()),
-        headRadius,
-        figure,
-      );
+      canvas.drawCircle(headCentre, headRadius, figure);
     }
     if (wrongGuesses >= 2) {
       line(Offset(beamEndX, bodyTop), hip, figure);
@@ -100,8 +80,9 @@ class GallowsPainter extends CustomPainter {
 
   Paint _stroke(Color color, Size size) => Paint()
     ..color = color
-    ..strokeWidth = size.shortestSide * 0.035
-    ..strokeCap = StrokeCap.round
+    ..strokeWidth = size.shortestSide * 0.03
+    ..strokeCap = StrokeCap.square
+    ..strokeJoin = StrokeJoin.miter
     ..style = PaintingStyle.stroke;
 
   @override
