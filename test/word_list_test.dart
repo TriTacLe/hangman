@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hangman/game/word_repository.dart';
 
 /// Reads the real word lists, so a typo in an asset fails here and not in
 /// front of whoever is grading it.
@@ -13,17 +13,13 @@ void main() {
           .where((line) => line.isNotEmpty)
           .toList();
 
-  String alphabetOf(String language) {
-    final arb = jsonDecode(
-      File('lib/l10n/app_$language.arb').readAsStringSync(),
-    ) as Map<String, dynamic>;
-    return arb['alphabet'] as String;
-  }
-
-  for (final language in ['en', 'nb']) {
+  for (final language in WordRepository.supportedLanguages) {
     group('words_$language', () {
       final words = load(language);
-      final alphabet = alphabetOf(language).toLowerCase().split('').toSet();
+      final alphabet = WordRepository.alphabetFor(language)
+          .toLowerCase()
+          .split('')
+          .toSet();
 
       test('has enough words to play a while', () {
         expect(words.length, greaterThanOrEqualTo(140));
