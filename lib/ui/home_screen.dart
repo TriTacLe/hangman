@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:hangman/game/game_store.dart';
 import 'package:hangman/game/hangman_game.dart';
 import 'package:hangman/l10n/app_localizations.dart';
 import 'package:hangman/ui/game_screen.dart';
-import 'package:hangman/ui/info_screen.dart';
+import 'package:hangman/ui/info_dialog.dart';
+import 'package:hangman/ui/theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -22,6 +25,13 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+/// Dialog actions sit side by side, so they keep a comfortable tap target
+/// without taking the full width the rest of the app's buttons do.
+final ButtonStyle _dialogAction = TextButton.styleFrom(
+  minimumSize: const Size(88, 48),
+  padding: const EdgeInsets.symmetric(horizontal: 20),
+);
+
 class _HomeScreenState extends State<HomeScreen> {
   Future<void> _open(BuildContext context, {SavedRound? savedRound}) async {
     await Navigator.of(context).push(
@@ -33,30 +43,51 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) setState(() {});
   }
 
+  /// Starting a new game throws the saved round away, so it asks first.
+  Future<void> _playInsteadOfContinuing() async {
+    final strings = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(strings.newGameTitle),
+        content: Text(strings.newGameMessage),
+        actions: [
+          TextButton(
+            // The app's buttons are full width by default, which in a dialog
+            // stacks the two actions down the middle.
+            style: _dialogAction,
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(strings.cancelButton),
+          ),
+          TextButton(
+            style: _dialogAction,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(strings.newGameConfirm),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted || confirmed != true) return;
+    await _open(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
-    final heading = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          strings.appTitle,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.displaySmall?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+    final banner = Container(
+      width: double.infinity,
+      color: theme.colorScheme.onSurface,
+      padding: const EdgeInsets.symmetric(vertical: HangmanShapes.gap),
+      child: Text(
+        strings.appTitle,
+        textAlign: TextAlign.center,
+        style: theme.textTheme.displaySmall?.copyWith(
+          color: theme.colorScheme.surface,
         ),
-        const SizedBox(height: 12),
-        Text(
-          strings.homeTagline,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
+      ),
     );
 
     final saved = widget.store?.round;
@@ -70,28 +101,26 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         if (canContinue) ...[
           FilledButton(
-            onPressed: () => _open(context, savedRound: saved),
+            onPressed: () => unawaited(_open(context, savedRound: saved)),
             child: Text(strings.continueButton),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: HangmanShapes.tight),
           OutlinedButton(
-            onPressed: () => _open(context),
+            onPressed: () => unawaited(_playInsteadOfContinuing()),
             child: Text(strings.playButton),
           ),
         ] else
           FilledButton(
-            onPressed: () => _open(context),
+            onPressed: () => unawaited(_open(context)),
             child: Text(strings.playButton),
           ),
-        const SizedBox(height: 12),
+        const SizedBox(height: HangmanShapes.tight),
         TextButton(
-          onPressed: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute<void>(builder: (_) => const InfoScreen())),
+          onPressed: () => unawaited(showInfoDialog(context)),
           child: Text(strings.infoButton),
         ),
-        const SizedBox(height: 32),
-        _LanguagePicker(
+        const SizedBox(height: HangmanShapes.loose),
+        _LanguageToggle(
           selectedLocale: widget.selectedLocale,
           onLocaleSelected: widget.onLocaleSelected,
         ),
@@ -104,28 +133,45 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, constraints) {
             final sideBySide = constraints.maxWidth > constraints.maxHeight;
 
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: sideBySide ? 820 : 420),
-                  child: sideBySide
-                      ? Row(
-                          children: [
-                            Expanded(child: heading),
-                            const SizedBox(width: 32),
-                            Expanded(child: controls),
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            heading,
-                            const SizedBox(height: 40),
-                            controls,
-                          ],
+            if (sideBySide) {
+              return Row(
+                children: [
+                  Expanded(child: Align(child: banner)),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(HangmanShapes.gap),
+                      child: controls,
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            // Portrait: title high against the margin, controls low, the air
+            // between them rather than wrapped evenly around everything.
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                // Bounded height, so the spacer below can resolve while the
+                // whole thing still scrolls at a large font size.
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      banner,
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          HangmanShapes.loose,
+                          HangmanShapes.gap,
+                          HangmanShapes.loose,
+                          HangmanShapes.gap,
                         ),
+                        child: controls,
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -136,8 +182,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _LanguagePicker extends StatelessWidget {
-  const _LanguagePicker({
+/// Two languages, one of them on. Nothing to read, nothing to open: the one
+/// that is filled in is the one you are using.
+class _LanguageToggle extends StatelessWidget {
+  const _LanguageToggle({
     required this.selectedLocale,
     required this.onLocaleSelected,
   });
@@ -145,41 +193,55 @@ class _LanguagePicker extends StatelessWidget {
   final Locale? selectedLocale;
   final ValueChanged<Locale?> onLocaleSelected;
 
-  static const String _systemValue = 'system';
-
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
+    // Before anything is picked the app follows the device, so the toggle
+    // shows whichever language that turned out to be.
+    final current =
+        selectedLocale?.languageCode ??
+        Localizations.localeOf(context).languageCode;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Text(
-          strings.languageLabel,
-          style: Theme.of(context).textTheme.titleSmall,
+        Expanded(
+          child: _LanguageButton(
+            label: strings.languageNorwegian,
+            selected: current == 'nb',
+            onTap: () => onLocaleSelected(const Locale('nb')),
+          ),
         ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          // Without this the Norwegian label runs past the field on a phone.
-          isExpanded: true,
-          initialValue: selectedLocale?.languageCode ?? _systemValue,
-          decoration: const InputDecoration(border: OutlineInputBorder()),
-          items: [
-            DropdownMenuItem(
-              value: _systemValue,
-              child: Text(strings.languageSystem),
-            ),
-            DropdownMenuItem(
-              value: 'nb',
-              child: Text(strings.languageNorwegian),
-            ),
-            DropdownMenuItem(value: 'en', child: Text(strings.languageEnglish)),
-          ],
-          onChanged: (value) => onLocaleSelected(
-            value == null || value == _systemValue ? null : Locale(value),
+        const SizedBox(width: HangmanShapes.tight),
+        Expanded(
+          child: _LanguageButton(
+            label: strings.languageEnglish,
+            selected: current == 'en',
+            onTap: () => onLocaleSelected(const Locale('en')),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LanguageButton extends StatelessWidget {
+  const _LanguageButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      selected: selected,
+      child: selected
+          ? FilledButton(onPressed: onTap, child: Text(label))
+          : OutlinedButton(onPressed: onTap, child: Text(label)),
     );
   }
 }
