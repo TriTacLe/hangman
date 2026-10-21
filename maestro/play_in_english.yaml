@@ -1,0 +1,29 @@
+# Plays a round in English on the Pixel 6 emulator, leaves it, and comes back.
+#
+# Maestro reads a Flutter app off the screen rather than through the view
+# hierarchy, and single letters are too small for that to be reliable, so the
+# assertions are on words and the key presses are on points. The coordinates
+# below are fractions of the screen, which keeps them stable across densities.
+appId: no.ntnu.idatt2506.hangman
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Hangman"
+- tapOn: "How to play"
+- assertVisible:
+    text: ".*Tap a letter to guess it.*"
+- back
+- tapOn: "Play"
+- assertVisible: "6 wrong guesses left"
+- tapOn:
+    point: "70%,52%"
+- tapOn:
+    point: "16%,52%"
+- assertVisible:
+    text: ".*wrong guesses left"
+- stopApp
+- launchApp
+- assertVisible: "Continue game"
+- tapOn: "Continue game"
+- assertVisible:
+    text: ".*wrong guesses left"

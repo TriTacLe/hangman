@@ -1,0 +1,14 @@
+# Switches the app to Norwegian from the start screen and starts a game there.
+appId: no.ntnu.idatt2506.hangman
+---
+- launchApp:
+    clearState: true
+- tapOn: "Norsk"
+- assertVisible: "Spill"
+- assertVisible: "Slik spiller du"
+- tapOn: "Slik spiller du"
+- assertVisible:
+    text: ".*Trykk på en bokstav for å gjette.*"
+- back
+- tapOn: "Spill"
+- assertVisible: "6 forsøk igjen"
