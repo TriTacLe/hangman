@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# A new push to the same branch makes the running job pointless.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Pinned because the golden files are rendered by a specific engine.
+          flutter-version: 3.47.7
+          cache: true
+      # The lockfile is the record of what was tested, so CI must not resolve
+      # anything newer than it.
+      - run: flutter pub get --enforce-lockfile
+      - run: dart format --set-exit-if-changed .
+      - run: flutter analyze
+      # Catches a key added to app_en.arb and forgotten in app_nb.arb.
+      - name: Check the generated localisations are up to date
+        run: |
+          flutter gen-l10n
+          test ! -s l10n-missing.txt || { cat l10n-missing.txt; exit 1; }
+          git diff --exit-code lib/l10n
+      - run: flutter test --coverage
+      - name: Upload the golden diffs when a golden fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-failures
+          path: test/**/failures/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: coverage
+          path: coverage/lcov.info
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.7
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      # Proves the Android side builds too, which flutter test cannot.
+      - run: flutter build apk --debug
