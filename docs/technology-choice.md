@@ -123,7 +123,7 @@ half only if I accept writing in two languages.
 
 The last row is where Flutter loses. Bringing your own renderer means shipping it, so the code that
 draws the interface rides along inside the app instead of being borrowed from the phone. The
-release build of this app is 47.9 MB with all three ABIs in it, 17.0 MB cut down to one. For hidden
+release build of this app is 46.6 MB with all four ABIs in it, 16.6 MB cut down to one. For hidden
 letters and six lines that is a lot of megabytes, and on a metered connection it would be the first
 thing anyone asked me about.
 
