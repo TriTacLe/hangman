@@ -12,8 +12,8 @@ class WordRepository {
 
   static const String fallbackLanguage = 'en';
 
-  /// The letters a round can use, per language. Game data rather than copy, and
-  /// it drives the hardware-key filter as well as the keyboard.
+  /// The letters a round can use, per language, which drive the hardware-key
+  /// filter as well as the keyboard.
   static const Map<String, String> alphabets = {
     'en': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     'nb': 'ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ',
@@ -34,8 +34,8 @@ class WordRepository {
   /// other list handed out.
   final Map<String, String> _previous = {};
 
-  /// A word for [languageCode], avoiding the one handed out last. Gives up
-  /// after a few tries rather than spinning on a list of identical entries.
+  /// A word for [languageCode], avoiding the one handed out last and giving up
+  /// after a few tries rather than spinning on identical entries.
   Future<String> randomWord(String languageCode) async {
     final words = await _wordsFor(languageCode);
     final language = _resolve(languageCode);

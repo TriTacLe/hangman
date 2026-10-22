@@ -11,8 +11,8 @@ class HangmanGame {
       _word = word.toUpperCase(),
       _letters = word.toUpperCase().split('').toSet();
 
-  /// Rebuilds a round from [toJson], replaying the guesses. Null for anything
-  /// this version did not write, so a stale payload is dropped, not thrown on.
+  /// Rebuilds a round from [toJson], or null for anything this version did not
+  /// write, so a stale payload is dropped rather than thrown on.
   static HangmanGame? tryFrom(Map<String, dynamic> json) {
     final word = json['word'];
     final maxWrongGuesses = json['maxWrongGuesses'];

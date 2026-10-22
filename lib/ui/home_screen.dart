@@ -182,8 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-/// Two languages, one of them on. Nothing to read, nothing to open: the one
-/// that is filled in is the one you are using.
+/// Two languages with the filled one in use, so there is nothing to read and
+/// nothing to open.
 class _LanguageToggle extends StatelessWidget {
   const _LanguageToggle({
     required this.selectedLocale,

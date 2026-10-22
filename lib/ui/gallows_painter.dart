@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// The frame is always drawn. [wrongGuesses] decides how much of the figure is.
+/// The frame is always drawn; [wrongGuesses] decides how much of the figure is.
 class GallowsPainter extends CustomPainter {
   GallowsPainter({
     required this.wrongGuesses,
