@@ -13,9 +13,6 @@ class AppLocalizationsNb extends AppLocalizations {
   String get appTitle => 'Hangman';
 
   @override
-  String get homeTagline => 'Gjett ordet, én bokstav om gangen.';
-
-  @override
   String get playButton => 'Spill';
 
   @override
@@ -25,26 +22,17 @@ class AppLocalizationsNb extends AppLocalizations {
   String get infoButton => 'Slik spiller du';
 
   @override
-  String get languageLabel => 'Språk';
-
-  @override
-  String get languageSystem => 'Språket på enheten';
-
-  @override
   String get languageEnglish => 'English';
 
   @override
   String get languageNorwegian => 'Norsk';
 
   @override
-  String get alphabet => 'ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ';
-
-  @override
   String get infoTitle => 'Slik spiller du';
 
   @override
   String get infoRules =>
-      'Spillet velger et ord og skjuler alle bokstavene. Trykk på en bokstav for å gjette. En bokstav som finnes i ordet, vises alle stedene den står, og en bokstav som ikke finnes, koster deg ett forsøk.\n\nDu har seks bom. Tegningen får én del til for hver av dem, og spillet er slutt når den er ferdig. Gjetter du alle bokstavene før det, har du vunnet.\n\nOrdet hentes fra lista for språket appen kjører på, så den norske lista bruker det norske alfabetet.\n\nGår du ut midt i en runde, blir den tatt vare på, og du kan ta den opp igjen fra startskjermen.';
+      'Spillet velger et ord og skjuler alle bokstavene. Trykk på en bokstav for å gjette. En bokstav som finnes i ordet, vises alle stedene den står, og en bokstav som ikke finnes, koster deg ett forsøk.\n\nDu har seks forsøk. Tegningen får én del til for hver av dem, og spillet er slutt når den er ferdig. Gjetter du alle bokstavene før det, har du vunnet.\n\nOrdet hentes fra lista for språket appen kjører på, så den norske lista bruker det norske alfabetet.\n\nGår du ut midt i en runde, blir den tatt vare på, og du kan ta den opp igjen fra startskjermen.';
 
   @override
   String remainingGuesses(num count) {
@@ -55,8 +43,8 @@ class AppLocalizationsNb extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$countString bom igjen',
-      one: '1 bom igjen',
+      other: '$countString forsøk igjen',
+      one: '1 forsøk igjen',
       zero: 'Ingen forsøk igjen',
     );
     return '$_temp0';
@@ -99,4 +87,47 @@ class AppLocalizationsNb extends AppLocalizations {
   String guessLetterHint(String letter) {
     return 'Gjett bokstaven $letter';
   }
+
+  @override
+  String get loadingWord => 'Henter et ord';
+
+  @override
+  String get loadFailedTitle => 'Fikk ikke lest ordlista.';
+
+  @override
+  String get retryButton => 'Prøv igjen';
+
+  @override
+  String get blankLetter => 'tom';
+
+  @override
+  String wordProgress(num hidden) {
+    final intl.NumberFormat hiddenNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hiddenString = hiddenNumberFormat.format(hidden);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      hidden,
+      locale: localeName,
+      other: '$hiddenString bokstaver er fortsatt skjult',
+      one: 'Én bokstav er fortsatt skjult',
+      zero: 'Alle bokstavene er avdekket',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get newGameTitle => 'Starte et nytt spill?';
+
+  @override
+  String get newGameMessage => 'Runden du ikke gjorde ferdig, blir forkastet.';
+
+  @override
+  String get newGameConfirm => 'Start nytt';
+
+  @override
+  String get closeButton => 'Lukk';
+
+  @override
+  String get cancelButton => 'Avbryt';
 }

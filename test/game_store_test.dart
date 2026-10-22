@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hangman/game/game_store.dart';
 import 'package:hangman/game/hangman_game.dart';
@@ -64,6 +66,67 @@ void main() {
 
       expect(store.round, isNull);
     });
+
+    test('json of the wrong shape reads as no round', () async {
+      // Reaching the start screen matters more than resuming: this used to
+      // throw past the getter and red-screen the app on every launch.
+      final payloads = <Object>[
+        {'version': 1, 'language': 'nb'},
+        {'version': 1, 'language': 7, 'game': <String, Object>{}},
+        {
+          'version': 1,
+          'language': 'nb',
+          'game': {'word': 'ost'},
+        },
+        {
+          'version': 1,
+          'language': 'nb',
+          'game': {'word': '', 'maxWrongGuesses': 6, 'guessed': <String>[]},
+        },
+        {
+          'version': 1,
+          'language': 'nb',
+          'game': {'word': 'ost', 'maxWrongGuesses': 0, 'guessed': <String>[]},
+        },
+        {
+          'version': 1,
+          'language': 'nb',
+          'game': {
+            'word': 'ost',
+            'maxWrongGuesses': 6,
+            'guessed': [1, 2],
+          },
+        },
+        {
+          'version': 1,
+          'language': 'nb',
+          'game': {
+            'word': 'ost',
+            'maxWrongGuesses': 6,
+            'guessed': ['os'],
+          },
+        },
+        [1, 2, 3],
+      ];
+
+      for (final payload in payloads) {
+        final raw = jsonEncode(payload);
+        final store = await openStore({'round': raw});
+
+        expect(store.round, isNull, reason: raw);
+      }
+    });
+
+    test('a round from another schema version reads as no round', () async {
+      final store = await openStore({
+        'round': jsonEncode({
+          'language': 'nb',
+          'game': {'word': 'ost', 'maxWrongGuesses': 6, 'guessed': <String>[]},
+        }),
+      });
+
+      expect(store.round, isNull);
+    });
   });
 
   group('HangmanGame serialisation', () {
@@ -73,7 +136,7 @@ void main() {
         ..guess('a')
         ..guess('e');
 
-      final copy = HangmanGame.fromJson(game.toJson());
+      final copy = HangmanGame.tryFrom(game.toJson())!;
 
       expect(copy.maskedWord, game.maskedWord);
       expect(copy.wrongGuesses, game.wrongGuesses);
@@ -85,7 +148,7 @@ void main() {
     test('a finished round stays finished', () {
       final game = HangmanGame(word: 'ost', maxWrongGuesses: 1)..guess('q');
 
-      expect(HangmanGame.fromJson(game.toJson()).status, GameStatus.lost);
+      expect(HangmanGame.tryFrom(game.toJson())!.status, GameStatus.lost);
     });
   });
 }

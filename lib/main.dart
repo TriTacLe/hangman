@@ -4,13 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:hangman/game/game_store.dart';
+import 'package:hangman/game/word_repository.dart';
 import 'package:hangman/l10n/app_localizations.dart';
 import 'package:hangman/ui/home_screen.dart';
 import 'package:hangman/ui/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(HangmanApp(store: await GameStore.open()));
+
+  GameStore? store;
+  try {
+    store = await GameStore.open();
+  } on Object {
+    // The game is playable without anything remembered between launches, so a
+    // broken preferences store must not stop the app from starting.
+    store = null;
+  }
+
+  runApp(HangmanApp(store: store));
 }
 
 class HangmanApp extends StatefulWidget {
@@ -31,7 +42,11 @@ class _HangmanAppState extends State<HangmanApp> {
   void initState() {
     super.initState();
     final saved = widget.store?.locale;
-    if (saved != null) _locale = Locale(saved);
+    // Ignore a stored language this build no longer ships.
+    final shipped = AppLocalizations.supportedLocales.any(
+      (locale) => locale.languageCode == saved,
+    );
+    if (saved != null && shipped) _locale = Locale(saved);
   }
 
   void _selectLocale(Locale? locale) {
@@ -42,7 +57,7 @@ class _HangmanAppState extends State<HangmanApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       locale: _locale,
       localizationsDelegates: const [
@@ -52,8 +67,7 @@ class _HangmanAppState extends State<HangmanApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      // Android reports Norwegian as nb, nn or no depending on the device.
-      localeResolutionCallback: _resolveLocale,
+      localeListResolutionCallback: _resolveLocale,
       theme: hangmanLightTheme(),
       darkTheme: hangmanDarkTheme(),
       home: HomeScreen(
@@ -64,14 +78,18 @@ class _HangmanAppState extends State<HangmanApp> {
     );
   }
 
-  Locale _resolveLocale(Locale? wanted, Iterable<Locale> supported) {
-    const norwegian = ['nb', 'nn', 'no'];
-    if (wanted == null) return supported.first;
-    if (norwegian.contains(wanted.languageCode)) return const Locale('nb');
+  /// First of the device's preferences that the app ships. Android reports
+  /// Norwegian as nb, nn or no depending on the device.
+  Locale _resolveLocale(List<Locale>? wanted, Iterable<Locale> supported) {
+    const norwegian = {'nb', 'nn', 'no'};
 
-    return supported.firstWhere(
-      (locale) => locale.languageCode == wanted.languageCode,
-      orElse: () => const Locale('en'),
-    );
+    for (final locale in wanted ?? const <Locale>[]) {
+      if (norwegian.contains(locale.languageCode)) return const Locale('nb');
+      for (final candidate in supported) {
+        if (candidate.languageCode == locale.languageCode) return candidate;
+      }
+    }
+
+    return const Locale(WordRepository.fallbackLanguage);
   }
 }

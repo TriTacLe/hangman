@@ -13,9 +13,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Hangman';
 
   @override
-  String get homeTagline => 'Guess the word one letter at a time.';
-
-  @override
   String get playButton => 'Play';
 
   @override
@@ -25,19 +22,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get infoButton => 'How to play';
 
   @override
-  String get languageLabel => 'Language';
-
-  @override
-  String get languageSystem => 'Device language';
-
-  @override
   String get languageEnglish => 'English';
 
   @override
   String get languageNorwegian => 'Norsk';
-
-  @override
-  String get alphabet => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   @override
   String get infoTitle => 'How to play';
@@ -99,4 +87,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String guessLetterHint(String letter) {
     return 'Guess the letter $letter';
   }
+
+  @override
+  String get loadingWord => 'Picking a word';
+
+  @override
+  String get loadFailedTitle => 'The word list could not be read.';
+
+  @override
+  String get retryButton => 'Try again';
+
+  @override
+  String get blankLetter => 'blank';
+
+  @override
+  String wordProgress(num hidden) {
+    final intl.NumberFormat hiddenNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String hiddenString = hiddenNumberFormat.format(hidden);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      hidden,
+      locale: localeName,
+      other: '$hiddenString letters still hidden',
+      one: 'One letter still hidden',
+      zero: 'Every letter revealed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get newGameTitle => 'Start a new game?';
+
+  @override
+  String get newGameMessage => 'The round you left unfinished will be dropped.';
+
+  @override
+  String get newGameConfirm => 'Start new';
+
+  @override
+  String get closeButton => 'Close';
+
+  @override
+  String get cancelButton => 'Cancel';
 }

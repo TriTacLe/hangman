@@ -4,10 +4,6 @@
   "@appTitle": {
     "description": "Name of the app, shown on the start screen and in the app bar"
   },
-  "homeTagline": "Guess the word one letter at a time.",
-  "@homeTagline": {
-    "description": "One line under the title on the start screen"
-  },
   "playButton": "Play",
   "continueButton": "Continue game",
   "@continueButton": {
@@ -20,14 +16,6 @@
   "@infoButton": {
     "description": "Opens the info page, from the start screen and from a running game"
   },
-  "languageLabel": "Language",
-  "@languageLabel": {
-    "description": "Label for the language choice on the start screen"
-  },
-  "languageSystem": "Device language",
-  "@languageSystem": {
-    "description": "Language option that follows the system setting"
-  },
   "languageEnglish": "English",
   "@languageEnglish": {
     "description": "Language option, written in the language it selects"
@@ -35,10 +23,6 @@
   "languageNorwegian": "Norsk",
   "@languageNorwegian": {
     "description": "Language option, written in the language it selects"
-  },
-  "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-  "@alphabet": {
-    "description": "The letters shown on the keyboard for this language, uppercase and in order"
   },
   "infoTitle": "How to play",
   "@infoTitle": {
@@ -107,5 +91,51 @@
         "example": "A"
       }
     }
+  },
+  "loadingWord": "Picking a word",
+  "@loadingWord": {
+    "description": "Screen reader label while the word list is being read"
+  },
+  "loadFailedTitle": "The word list could not be read.",
+  "@loadFailedTitle": {
+    "description": "Shown when the word list is missing or empty"
+  },
+  "retryButton": "Try again",
+  "@retryButton": {
+    "description": "Reads the word list again after it failed"
+  },
+  "blankLetter": "blank",
+  "@blankLetter": {
+    "description": "How a screen reader reads a letter that is still hidden"
+  },
+  "wordProgress": "{hidden, plural, =0{Every letter revealed} =1{One letter still hidden} other{{hidden} letters still hidden}}",
+  "@wordProgress": {
+    "description": "Screen reader summary of how much of the word is left",
+    "placeholders": {
+      "hidden": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "newGameTitle": "Start a new game?",
+  "@newGameTitle": {
+    "description": "Asked when a new game would drop the round in progress"
+  },
+  "newGameMessage": "The round you left unfinished will be dropped.",
+  "@newGameMessage": {
+    "description": "Explains what starting a new game costs"
+  },
+  "newGameConfirm": "Start new",
+  "@newGameConfirm": {
+    "description": "Confirms dropping the saved round"
+  },
+  "closeButton": "Close",
+  "@closeButton": {
+    "description": "Dismisses the rules dialog"
+  },
+  "cancelButton": "Cancel",
+  "@cancelButton": {
+    "description": "Dismisses a dialog without doing anything"
   }
 }

@@ -1,3 +1,9 @@
 arb-dir: lib/l10n
 template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
+# Keeps `AppLocalizations.of(context)` non-null, so the UI has no reason to
+# force-unwrap it.
+nullable-getter: false
+# Any key missing from a translation lands here instead of silently falling
+# back to English.
+untranslated-messages-file: l10n-missing.txt

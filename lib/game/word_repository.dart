@@ -10,30 +10,50 @@ class WordRepository {
     : _loadAsset = loadAsset ?? rootBundle.loadString,
       _random = random ?? Random();
 
-  static const Set<String> supportedLanguages = {'en', 'nb'};
   static const String fallbackLanguage = 'en';
+
+  /// The letters a round can use, per language. Game data rather than copy, and
+  /// it drives the hardware-key filter as well as the keyboard.
+  static const Map<String, String> alphabets = {
+    'en': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    'nb': 'ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ',
+  };
+
+  static Set<String> get supportedLanguages => alphabets.keys.toSet();
+
+  /// The alphabet for [languageCode], or the fallback language's for one that
+  /// is not shipped.
+  static String alphabetFor(String languageCode) =>
+      alphabets[languageCode] ?? alphabets[fallbackLanguage]!;
 
   final AssetLoader _loadAsset;
   final Random _random;
   final Map<String, List<String>> _cache = {};
-  String? _previous;
 
-  /// A word from the list for [languageCode], never the one handed out last.
+  /// Per language, so switching language cannot be blocked by the word the
+  /// other list handed out.
+  final Map<String, String> _previous = {};
+
+  /// A word for [languageCode], avoiding the one handed out last. Gives up
+  /// after a few tries rather than spinning on a list of identical entries.
   Future<String> randomWord(String languageCode) async {
     final words = await _wordsFor(languageCode);
-    if (words.length == 1) return _previous = words.single;
+    final language = _resolve(languageCode);
+    final previous = _previous[language];
 
-    String word;
-    do {
+    var word = words[_random.nextInt(words.length)];
+    for (var attempt = 0; attempt < 10 && word == previous; attempt++) {
       word = words[_random.nextInt(words.length)];
-    } while (word == _previous);
-    return _previous = word;
+    }
+
+    return _previous[language] = word;
   }
 
+  static String _resolve(String languageCode) =>
+      alphabets.containsKey(languageCode) ? languageCode : fallbackLanguage;
+
   Future<List<String>> _wordsFor(String languageCode) async {
-    final language = supportedLanguages.contains(languageCode)
-        ? languageCode
-        : fallbackLanguage;
+    final language = _resolve(languageCode);
     final cached = _cache[language];
     if (cached != null) return cached;
 

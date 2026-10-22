@@ -3,7 +3,6 @@ include: package:very_good_analysis/analysis_options.yaml
 analyzer:
   exclude:
     - build/**
-    - lib/l10n/app_localizations*.dart
     - android/**
     - ios/**
     - web/**
@@ -18,6 +17,3 @@ linter:
     # This is an app, not a package. Documenting every public member would mean
     # a docstring on every widget, which says nothing the name does not.
     public_member_api_docs: false
-    # Flutter's own samples put the child argument last; keeping that reads
-    # better here than alphabetical argument order.
-    sort_child_properties_last: true

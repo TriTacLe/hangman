@@ -36,13 +36,46 @@ void main() {
       }
     });
 
-    test('the same seed gives the same word', () async {
-      Future<String> pick() => WordRepository(
-        loadAsset: (_) async => 'ost\nsykkel\nblabaer\n',
-        random: Random(42),
-      ).randomWord('nb');
+    test('the same seed gives the same sequence of words', () async {
+      Future<List<String>> threeWords() async {
+        final repository = WordRepository(
+          loadAsset: (_) async => 'ost\nsykkel\nblabaer\n',
+          random: Random(42),
+        );
+        return [
+          await repository.randomWord('nb'),
+          await repository.randomWord('nb'),
+          await repository.randomWord('nb'),
+        ];
+      }
 
-      expect(await pick(), await pick());
+      final first = await threeWords();
+
+      expect(await threeWords(), first);
+      // Same seed, and the no-repeat rule still holds inside the sequence.
+      expect(first[0], isNot(first[1]));
+      expect(first[1], isNot(first[2]));
+    });
+
+    test('a list of identical words returns instead of spinning', () async {
+      final repository = WordRepository(
+        loadAsset: (_) async => 'ost\nost\nost\n',
+        random: Random(1),
+      );
+
+      expect(await repository.randomWord('nb'), 'ost');
+      expect(await repository.randomWord('nb'), 'ost');
+    });
+
+    test('the last word of one language does not block the other', () async {
+      final repository = WordRepository(
+        loadAsset: (path) async => path.contains('nb') ? 'ost' : 'cheese',
+        random: Random(3),
+      );
+
+      expect(await repository.randomWord('nb'), 'ost');
+      expect(await repository.randomWord('en'), 'cheese');
+      expect(await repository.randomWord('nb'), 'ost');
     });
 
     test('never hands out the same word twice in a row', () async {
