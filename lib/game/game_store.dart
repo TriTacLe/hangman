@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:hangman/game/hangman_game.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// What survives the app being killed: the chosen language and the round in
-/// progress. Everything that touches SharedPreferences goes through here.
+/// Everything that survives the app being killed: the chosen language and the
+/// round in progress.
 class GameStore {
   GameStore(this._prefs);
 
@@ -23,8 +23,8 @@ class GameStore {
       ? _prefs.remove(_localeKey)
       : _prefs.setString(_localeKey, languageCode);
 
-  /// The round left mid-play, or null. Storage this version cannot read counts
-  /// as none: the start screen reads it while building, so it must not throw.
+  /// The round left mid-play, or null when there is none this version can read,
+  /// since the start screen reads it while building and must not throw.
   SavedRound? get round {
     final raw = _prefs.getString(_roundKey);
     if (raw == null) return null;
@@ -51,7 +51,7 @@ class GameStore {
 class SavedRound {
   const SavedRound({required this.language, required this.game});
 
-  /// Bumped whenever the stored shape changes. An older or newer payload is
+  /// Bumped whenever the stored shape changes, so another version's payload is
   /// discarded rather than guessed at.
   static const int schemaVersion = 1;
 

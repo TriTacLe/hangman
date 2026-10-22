@@ -4,8 +4,8 @@ import 'package:hangman/game/hangman_game.dart';
 import 'package:hangman/l10n/app_localizations.dart';
 import 'package:hangman/ui/theme.dart';
 
-/// One bordered box per letter. The boxes are drawn, so the semantics come from
-/// a label instead of the glyphs.
+/// One bordered box per letter, drawn rather than typed, so the semantics come
+/// from a label instead of the glyphs.
 class WordDisplay extends StatelessWidget {
   const WordDisplay({
     required this.word,

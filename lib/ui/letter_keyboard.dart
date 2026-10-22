@@ -6,8 +6,8 @@ import 'package:hangman/ui/theme.dart';
 /// How a key looks once it has been used.
 enum LetterState { untouched, correct, wrong }
 
-/// Keys are 48 by 48 and grow with the text scale. A hit thickens the border, a
-/// miss strikes the letter through, so the state survives without colour.
+/// Keys grow with the text scale from 48 by 48, and carry their state as border
+/// weight and strikethrough so it survives without colour.
 class LetterKeyboard extends StatelessWidget {
   const LetterKeyboard({
     required this.letters,

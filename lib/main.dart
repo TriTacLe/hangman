@@ -78,8 +78,8 @@ class _HangmanAppState extends State<HangmanApp> {
     );
   }
 
-  /// First of the device's preferences that the app ships. Android reports
-  /// Norwegian as nb, nn or no depending on the device.
+  /// First of the device's preferences that the app ships, with Norwegian
+  /// arriving as nb, nn or no depending on the device.
   Locale _resolveLocale(List<Locale>? wanted, Iterable<Locale> supported) {
     const norwegian = {'nb', 'nn', 'no'};
 

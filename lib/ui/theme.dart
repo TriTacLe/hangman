@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Black on white. Green was in the word, red was not, and red never sets body
-/// text: test/accessibility_test.dart holds the contrast numbers.
+/// Black on white, green for a letter in the word and red for one that is not,
+/// with the contrast numbers asserted in test/accessibility_test.dart.
 abstract final class HangmanColors {
   static const paper = Color(0xFFFFFFFF);
   static const ink = Color(0xFF000000);
@@ -25,8 +25,8 @@ abstract final class HangmanShapes {
   static const double border = 2;
   static const double borderHeavy = 4;
 
-  /// Spacing steps. Deliberately uneven, so the rhythm is composed instead of
-  /// being the same gap everywhere.
+  /// Spacing steps, deliberately uneven so the rhythm is composed rather than
+  /// one gap repeated everywhere.
   static const double tight = 6;
   static const double snug = 12;
   static const double gap = 20;

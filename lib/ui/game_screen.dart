@@ -13,8 +13,8 @@ import 'package:hangman/ui/letter_keyboard.dart';
 import 'package:hangman/ui/theme.dart';
 import 'package:hangman/ui/word_display.dart';
 
-/// One round of Hangman. The word follows the language the app is running in,
-/// so changing language and starting a new game changes the word list too.
+/// One round of Hangman, with the word taken from the list for whichever
+/// language the app is running in.
 class GameScreen extends StatefulWidget {
   const GameScreen({
     super.key,
@@ -26,7 +26,7 @@ class GameScreen extends StatefulWidget {
   /// Injectable so widget tests do not depend on the asset bundle.
   final WordRepository? wordRepository;
 
-  /// Where the round is kept between guesses. Null means it is not kept.
+  /// Where the round is kept between guesses, null when it is not kept.
   final GameStore? store;
 
   /// A round to pick up instead of drawing a new word.
@@ -127,8 +127,8 @@ class _GameScreenState extends State<GameScreen> {
     _persist(language);
   }
 
-  /// Saves after every change and drops a finished round. [language] is the one
-  /// the round started in, not whatever is on screen when the write runs.
+  /// Saves after every change and drops a finished round, under the [language]
+  /// the round started in rather than the one on screen when the write runs.
   void _persist(String language) {
     final store = widget.store;
     final game = _game;
